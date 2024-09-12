@@ -6,7 +6,7 @@ const express = require("express");
 const cors = require("cors");
 
 //require MongoDB client
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // Express App
 const app= express();
@@ -33,6 +33,34 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const userCollections = client.db("userDB").collection("users");
+
+    // Read Users
+    app.get('/users', async (req, res) => {
+      const cursor = userCollections.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+    
+    // Upload a new user
+    app.post('/users', async(req, res)=>{
+      const user = req.body;
+      console.log('New User', user);
+      const result = await userCollections.insertOne(user);
+      res.send(result);
+    })
+
+    // Delete a user
+    app.delete('/users/:id', async(req, res)=>{
+      const id = req.params.id;
+      console.log(id, 'Deleted');
+      const query = {_id: new ObjectId(id)};
+      const result = await userCollections.deleteOne(query);
+      res.send(result);
+      
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
