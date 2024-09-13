@@ -34,32 +34,96 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const userCollections = client.db("userDB").collection("users");
-
-    // Read Users
-    app.get('/users', async (req, res) => {
-      const cursor = userCollections.find();
-      const result = await cursor.toArray();
-      res.send(result)
-    })
+    // const userCollections = client.db("userDB").collection("users");
+    const WhiteBoardCollections = client.db("wbdb").collection("WhiteBoardCollections");
     
-    // Upload a new user
-    app.post('/users', async(req, res)=>{
-      const user = req.body;
-      console.log('New User', user);
-      const result = await userCollections.insertOne(user);
-      res.send(result);
-    })
+    // Get All Drawings
+    app.post('/api/drawings', async (req, res) => {
+      const { title, elements } = req.body;
 
-    // Delete a user
-    app.delete('/users/:id', async(req, res)=>{
-      const id = req.params.id;
-      console.log(id, 'Deleted');
-      const query = {_id: new ObjectId(id)};
-      const result = await userCollections.deleteOne(query);
-      res.send(result);
-      
-    })
+      try {
+        const newDrawing = {
+          title,
+          elements,
+          createdAt: new Date(),
+        };
+
+        const result = await WhiteBoardCollections.insertOne(newDrawing);
+        res.status(201).json(result.ops[0]);
+      } catch (err) {
+        res.status(500).json({ error: 'Failed to create drawing' });
+      }
+    });
+
+    // Get a Specific Drawing by ID
+    app.get('/api/drawings/:id', async (req, res) => {
+      try {
+        const drawing = await WhiteBoardCollections.findOne({ _id: ObjectId(req.params.id) });
+        
+        if (!drawing) {
+          return res.status(404).json({ error: 'Drawing not found' });
+        }
+        
+        res.json(drawing);
+      } catch (err) {
+        res.status(500).json({ error: 'Failed to retrieve drawing' });
+      }
+    });
+
+    // Create a New Drawing
+    app.post('/api/drawings', async (req, res) => {
+      const { title, elements } = req.body;
+
+      try {
+        const newDrawing = {
+          title,
+          elements,
+          createdAt: new Date(),
+        };
+
+        const result = await WhiteBoardCollections.insertOne(newDrawing);
+        res.status(201).json(result.ops[0]);
+      } catch (err) {
+        res.status(500).json({ error: 'Failed to create drawing' });
+      }
+    });
+
+    // Update a Drawing
+    app.put('/api/drawings/:id', async (req, res) => {
+      const { title, elements } = req.body;
+
+      try {
+        const updatedDrawing = await WhiteBoardCollections.findOneAndUpdate(
+          { _id: ObjectId(req.params.id) },
+          { $set: { title, elements } },
+          { returnOriginal: false }
+        );
+
+        if (!updatedDrawing.value) {
+          return res.status(404).json({ error: 'Drawing not found' });
+        }
+
+        res.json(updatedDrawing.value);
+      } catch (err) {
+        res.status(500).json({ error: 'Failed to update drawing' });
+      }
+    });    
+
+    // Delete a Drawing
+    app.delete('/api/drawings/:id', async (req, res) => {
+      try {
+        const result = await WhiteBoardCollections.deleteOne({ _id: ObjectId(req.params.id) });
+
+        if (result.deletedCount === 0) {
+          return res.status(404).json({ error: 'Drawing not found' });
+        }
+
+        res.json({ message: 'Drawing deleted successfully' });
+      } catch (err) {
+        res.status(500).json({ error: 'Failed to delete drawing' });
+      }
+    });
+ 
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
