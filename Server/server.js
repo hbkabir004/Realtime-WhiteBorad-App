@@ -35,9 +35,16 @@ async function run() {
     await client.connect();
 
     // const userCollections = client.db("userDB").collection("users");
-    const WhiteBoardCollections = client.db("wbdb").collection("WhiteBoardCollections");
+    const whiteBoardCollections = client.db("wbdb").collection("WhiteBoardCollections");
     
     // Get All Drawings
+    app.get('/api/drawings', async (req, res) => {
+      const cursor = whiteBoardCollections.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+
+
     app.post('/api/drawings', async (req, res) => {
       const { title, elements } = req.body;
 
@@ -48,7 +55,7 @@ async function run() {
           createdAt: new Date(),
         };
 
-        const result = await WhiteBoardCollections.insertOne(newDrawing);
+        const result = await whiteBoardCollections.insertOne(newDrawing);
         res.status(201).json(result.ops[0]);
       } catch (err) {
         res.status(500).json({ error: 'Failed to create drawing' });
@@ -58,7 +65,7 @@ async function run() {
     // Get a Specific Drawing by ID
     app.get('/api/drawings/:id', async (req, res) => {
       try {
-        const drawing = await WhiteBoardCollections.findOne({ _id: ObjectId(req.params.id) });
+        const drawing = await whiteBoardCollections.findOne({ _id: ObjectId(req.params.id) });
         
         if (!drawing) {
           return res.status(404).json({ error: 'Drawing not found' });
@@ -81,7 +88,7 @@ async function run() {
           createdAt: new Date(),
         };
 
-        const result = await WhiteBoardCollections.insertOne(newDrawing);
+        const result = await whiteBoardCollections.insertOne(newDrawing);
         res.status(201).json(result.ops[0]);
       } catch (err) {
         res.status(500).json({ error: 'Failed to create drawing' });
@@ -93,7 +100,7 @@ async function run() {
       const { title, elements } = req.body;
 
       try {
-        const updatedDrawing = await WhiteBoardCollections.findOneAndUpdate(
+        const updatedDrawing = await whiteBoardCollections.findOneAndUpdate(
           { _id: ObjectId(req.params.id) },
           { $set: { title, elements } },
           { returnOriginal: false }
@@ -112,7 +119,7 @@ async function run() {
     // Delete a Drawing
     app.delete('/api/drawings/:id', async (req, res) => {
       try {
-        const result = await WhiteBoardCollections.deleteOne({ _id: ObjectId(req.params.id) });
+        const result = await whiteBoardCollections.deleteOne({ _id: ObjectId(req.params.id) });
 
         if (result.deletedCount === 0) {
           return res.status(404).json({ error: 'Drawing not found' });
