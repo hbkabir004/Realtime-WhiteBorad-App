@@ -154,7 +154,3 @@ MERN-Interview-Test/
 ## License
 
 This project is licensed under the MIT License.
-
----
-
-Feel free to customize it with your own project details, and replace the placeholders where necessary!
