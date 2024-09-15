@@ -95,19 +95,19 @@ const DrawingBoard = ({ initialData }) => {
     return (
         <div className="container mx-auto py-4">
             <div className="flex items-center space-x-4 mb-4">
-                <button onClick={() => setDrawMode('pen')} className={`btn ${drawMode === 'pen' && 'btn-active'}`}>
+                <button onClick={() => setDrawMode('pen')} className={`btn bg-black ${drawMode === 'pen' && 'btn-active'}`}>
                     Pen
                 </button>
-                <button onClick={() => setDrawMode('line')} className={`btn ${drawMode === 'line' && 'btn-active'}`}>
+                <button onClick={() => setDrawMode('line')} className={`btn bg-purple-700 hover:bg-purple-900 ${drawMode === 'line' && 'btn-active'}`}>
                     Line
                 </button>
-                <button onClick={() => setDrawMode('rectangle')} className={`btn ${drawMode === 'rectangle' && 'btn-active'}`}>
+                <button onClick={() => setDrawMode('rectangle')} className={`btn bg-blue-500 hover:bg-blue-700 ${drawMode === 'rectangle' && 'btn-active'}`}>
                     Rectangle
                 </button>
-                <button onClick={() => setDrawMode('text')} className={`btn ${drawMode === 'text' && 'btn-active'}`}>
+                <button onClick={() => setDrawMode('text')} className={`btn bg-gray-600 hover:bg-gray-800 ${drawMode === 'text' && 'btn-active'}`}>
                     Text
                 </button>
-                <button onClick={clearCanvas} className="btn">
+                <button onClick={clearCanvas} className="btn bg-red-500 hover:bg-red-700">
                     Clear
                 </button>
             </div>
@@ -131,7 +131,7 @@ const DrawingBoard = ({ initialData }) => {
                         placeholder="Enter text"
                         className="input"
                     />
-                    <button type="submit" className="btn ml-2">
+                    <button type="submit" className="btn bg-yellow-500 hover:bg-yellow-700 ml-2">
                         Add Text
                     </button>
                 </form>
