@@ -6,6 +6,11 @@
 /Client/.env
 /Server/.env
 
+# Vercel Deployment files for both Client-side and Server-side
+/Client/.vercel
+/Server/.vercel
+/Server/vercel.json
+
 # Logs
 /logs/
 /*.log
