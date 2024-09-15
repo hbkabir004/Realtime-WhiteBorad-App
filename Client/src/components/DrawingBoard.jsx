@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const DrawingBoard = ({ initialData }) => {
+const DrawingBoard = () => {
     const canvasRef = useRef(null);
     const ctxRef = useRef(null);
 
@@ -19,71 +19,87 @@ const DrawingBoard = ({ initialData }) => {
         ctxRef.current = ctx;
     }, []);
 
+    // Mouse event handlers
     const handleMouseDown = (e) => {
         const { offsetX, offsetY } = e.nativeEvent;
-        setStartPoint({ x: offsetX, y: offsetY });
-        setIsDrawing(true);
+        startDrawing(offsetX, offsetY);
+    };
 
-        if (drawMode === 'text') {
-            setIsTextMode(true);
-        }
+    const handleMouseMove = (e) => {
+        const { offsetX, offsetY } = e.nativeEvent;
+        if (isDrawing && drawMode !== 'text') draw(offsetX, offsetY);
     };
 
     const handleMouseUp = () => {
         setIsDrawing(false);
-
-        if (drawMode === 'line' || drawMode === 'rectangle') {
-            const canvas = canvasRef.current;
-            const ctx = canvas.getContext('2d');
-            ctxRef.current = ctx;
-        }
     };
 
-    const handleMouseMove = (e) => {
-        if (!isDrawing) return;
-
-        const { offsetX, offsetY } = e.nativeEvent;
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-
-        if (drawMode === 'pen') {
-            ctx.lineTo(offsetX, offsetY);
-            ctx.stroke();
-        } else if (drawMode === 'line') {
-            drawLine(ctx, startPoint.x, startPoint.y, offsetX, offsetY);
-        } else if (drawMode === 'rectangle') {
-            drawRectangle(ctx, startPoint.x, startPoint.y, offsetX, offsetY);
-        }
-    };
-
-    const drawLine = (ctx, x1, y1, x2, y2) => {
-        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // Clear canvas for better drawing
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-        ctx.closePath();
-    };
-
-    const drawRectangle = (ctx, x1, y1, x2, y2) => {
-        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // Clear canvas
-        ctx.beginPath();
-        ctx.rect(x1, y1, x2 - x1, y2 - y1);
-        ctx.stroke();
-        ctx.closePath();
-    };
-
-    const handleTextSubmit = (e) => {
+    // Touch event handlers (for mobile devices)
+    const handleTouchStart = (e) => {
         e.preventDefault();
-        if (isTextMode) {
-            const { x, y } = startPoint;
-            const ctx = ctxRef.current;
-            ctx.fillStyle = 'black';
-            ctx.font = '16px Arial';
-            ctx.fillText(text, x, y);
+        const touch = e.touches[0];
+        const { left, top } = canvasRef.current.getBoundingClientRect();
+        startDrawing(touch.clientX - left, touch.clientY - top);
+    };
+
+    const handleTouchMove = (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const { left, top } = canvasRef.current.getBoundingClientRect();
+        if (isDrawing && drawMode !== 'text') draw(touch.clientX - left, touch.clientY - top);
+    };
+
+    const handleTouchEnd = () => {
+        setIsDrawing(false);
+    };
+
+    const startDrawing = (x, y) => {
+        if (drawMode === 'text' && text.trim()) {
+            addText(x, y, text);
             setText('');
             setIsTextMode(false);
+            return;
         }
+        setIsDrawing(true);
+        setStartPoint({ x, y });
+        ctxRef.current.beginPath();
+        ctxRef.current.moveTo(x, y);
+    };
+
+    const draw = (x, y) => {
+        if (!isDrawing) return;
+
+        if (drawMode === 'pen') {
+            ctxRef.current.lineTo(x, y);
+            ctxRef.current.stroke();
+        } else if (drawMode === 'line') {
+            drawLine(startPoint.x, startPoint.y, x, y);
+        } else if (drawMode === 'rectangle') {
+            drawRectangle(startPoint.x, startPoint.y, x, y);
+        }
+    };
+
+    const drawLine = (x1, y1, x2, y2) => {
+        ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // Clear canvas for better drawing
+        ctxRef.current.beginPath();
+        ctxRef.current.moveTo(x1, y1);
+        ctxRef.current.lineTo(x2, y2);
+        ctxRef.current.stroke();
+        ctxRef.current.closePath();
+    };
+
+    const drawRectangle = (x1, y1, x2, y2) => {
+        ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // Clear canvas
+        ctxRef.current.beginPath();
+        ctxRef.current.rect(x1, y1, x2 - x1, y2 - y1);
+        ctxRef.current.stroke();
+        ctxRef.current.closePath();
+    };
+
+    const addText = (x, y, inputText) => {
+        ctxRef.current.font = '20px Arial';
+        ctxRef.current.fillStyle = 'black';
+        ctxRef.current.fillText(inputText, x, y);
     };
 
     const clearCanvas = () => {
@@ -93,49 +109,60 @@ const DrawingBoard = ({ initialData }) => {
     };
 
     return (
-        <div className="container mx-auto py-4">
-            <div className="flex items-center space-x-4 mb-4">
-                <button onClick={() => setDrawMode('pen')} className={`btn bg-black ${drawMode === 'pen' && 'btn-active'}`}>
+        <div className="container mx-auto py-4 px-4">
+            <div className="flex flex-wrap items-center justify-center space-x-4 space-y-2 sm:space-y-0 mb-4">
+                <button onClick={() => setDrawMode('pen')} className={`btn bg-black ${drawMode === 'pen' && 'btn-active'} sm:px-4 px-2`}>
                     Pen
                 </button>
-                <button onClick={() => setDrawMode('line')} className={`btn bg-purple-700 hover:bg-purple-900 ${drawMode === 'line' && 'btn-active'}`}>
+                <button onClick={() => setDrawMode('line')} className={`btn bg-blue-500 hover:bg-blue-700 ${drawMode === 'line' && 'btn-active'} sm:px-4 px-2`}>
                     Line
                 </button>
-                <button onClick={() => setDrawMode('rectangle')} className={`btn bg-blue-500 hover:bg-blue-700 ${drawMode === 'rectangle' && 'btn-active'}`}>
+                <button
+                    onClick={() => setDrawMode('rectangle')}
+                    className={`btn bg-purple-700 hover:bg-purple-900 ${drawMode === 'rectangle' && 'btn-active'} sm:px-4 px-2`}
+                >
                     Rectangle
                 </button>
-                <button onClick={() => setDrawMode('text')} className={`btn bg-gray-600 hover:bg-gray-800 ${drawMode === 'text' && 'btn-active'}`}>
+                <button
+                    onClick={() => {
+                        setDrawMode('text');
+                        setIsTextMode(true);
+                    }}
+                    className={`btn bg-gray-600 hover:bg-gray-800 ${drawMode === 'text' && 'btn-active'} sm:px-4 px-2`}
+                >
                     Text
                 </button>
-                <button onClick={clearCanvas} className="btn bg-red-500 hover:bg-red-700">
+                <button onClick={clearCanvas} className="btn bg-red-500 hover:bg-red-700 sm:px-4 px-2">
                     Clear
                 </button>
             </div>
 
-            <canvas
-                ref={canvasRef}
-                width={800}
-                height={600}
-                className="border border-gray-500"
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}
-                onMouseMove={handleMouseMove}
-            />
-
             {isTextMode && (
-                <form onSubmit={handleTextSubmit} className="mt-2">
+                <div className="my-10 flex justify-center">
                     <input
                         type="text"
                         value={text}
                         onChange={(e) => setText(e.target.value)}
-                        placeholder="Enter text"
-                        className="input"
+                        placeholder="Enter text to add"
+                        className="border p-2 rounded w-full max-w-xs"
                     />
-                    <button type="submit" className="btn bg-yellow-500 hover:bg-yellow-700 ml-2">
-                        Add Text
-                    </button>
-                </form>
+                </div>
             )}
+
+            <div className="flex justify-center">
+                <canvas
+                    ref={canvasRef}
+                    width={800}
+                    height={600}
+                    className="border border-gray-500 w-full sm:w-[600px] h-[400px] sm:h-[450px] md:w-[800px] md:h-[600px]"
+                    onMouseDown={handleMouseDown}
+                    onMouseUp={handleMouseUp}
+                    onMouseMove={handleMouseMove}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                />
+            </div>
         </div>
     );
 };

@@ -38,7 +38,7 @@ const SingleDrawing = () => {
 
     return (
         <div className="container mx-auto py-8">
-            <h1 className="text-3xl font-bold mb-6">{drawing?.title}</h1>
+            <h1 className="text-3xl font-bold mb-6 text-center">{drawing?.title}</h1>
             <DrawingBoard initialData={drawing} />
         </div>
     );
