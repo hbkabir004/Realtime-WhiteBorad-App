@@ -143,7 +143,7 @@ const DrawingBoard = () => {
                         type="text"
                         value={text}
                         onChange={(e) => setText(e.target.value)}
-                        placeholder="Enter text to add"
+                        placeholder="Enter text and touch the canvas to add"
                         className="border p-2 rounded w-full max-w-xs"
                     />
                 </div>
