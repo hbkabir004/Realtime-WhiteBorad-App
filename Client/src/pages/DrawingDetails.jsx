@@ -25,8 +25,8 @@ const DrawingDetails = () => {
         return <LoadingSpin />;
     }
 
-    const createdDate = new Date(drawing.created_at).toLocaleString();
-    const updatedDate = new Date(drawing.updated_at).toLocaleString();
+    const createdDate = new Date(drawing.createdAt).toLocaleString();
+    const updatedDate = new Date(drawing.updatedAt).toLocaleString();
 
     return (
         <div className="container mx-auto py-8">

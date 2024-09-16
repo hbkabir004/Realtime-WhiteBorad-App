@@ -10,14 +10,16 @@ const CreateDrawingPage = () => {
 
     // Callback function to capture drawing data from DrawingBoard
     const handleDrawingChange = (data) => {
-        // Add created_at and updated_at when drawing data is received
+        // Add createdAt and updatedAt when drawing data is received
         const timestampedData = {
             ...data,
-            created_at: new Date().toLocaleString(), // Set the created_at timestamp
-            updated_at: new Date().toLocaleString(), // Set the updated_at timestamp
+            createdAt: new Date().toLocaleString(), // Set the createdAt timestamp
+            updatedAt: new Date().toLocaleString(), // Set the updatedAt timestamp
         };
+        // console.log("timestampedData=>", timestampedData);
         setDrawingData(timestampedData); // Set the drawing data with timestamps
     };
+
 
     const handleCreateDrawing = async (e) => {
         e.preventDefault();
@@ -58,7 +60,7 @@ const CreateDrawingPage = () => {
 
             {/* Drawing Board Component */}
             <div className="mb-4">
-                <DrawingBoard onDrawingChange={handleDrawingChange} timestampedData={timestampedData} />
+                <DrawingBoard onDrawingChange={handleDrawingChange} />
             </div>
 
             {/* Create Button */}

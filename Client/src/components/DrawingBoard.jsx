@@ -68,8 +68,8 @@ const DrawingBoard = () => {
         const newDrawing = {
             id: Date.now(), // Unique ID for the drawing
             drawMode,
-            created_at: new Date().toLocaleString(), // Set created_at when a new drawing starts
-            updated_at: new Date().toLocaleString(), // Set updated_at when a new drawing starts
+            createdAt: new Date().toLocaleString(), // Set createdAt when a new drawing starts
+            updatedAt: new Date().toLocaleString(), // Set updatedAt when a new drawing starts
             points: [], // To track points for the drawing (optional for complex shapes)
         };
         setCurrentDrawing(newDrawing);
@@ -88,7 +88,7 @@ const DrawingBoard = () => {
         if (currentDrawing) {
             const updatedDrawing = {
                 ...currentDrawing,
-                updated_at: new Date().toISOString(), // Update the updated_at timestamp
+                updatedAt: new Date().toISOString(), // Update the updatedAt timestamp
             };
             setCurrentDrawing(updatedDrawing);
 
@@ -108,7 +108,7 @@ const DrawingBoard = () => {
             // Finalize the drawing and update the drawings array
             const updatedDrawings = drawings.map((drawing) =>
                 drawing.id === currentDrawing.id
-                    ? { ...currentDrawing, updated_at: new Date().toISOString() }
+                    ? { ...currentDrawing, updatedAt: new Date().toISOString() }
                     : drawing
             );
             setDrawings(updatedDrawings);
