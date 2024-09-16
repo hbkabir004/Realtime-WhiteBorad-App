@@ -25,16 +25,19 @@ const DrawingDetails = () => {
         return <LoadingSpin />;
     }
 
+    const createdDate = new Date(drawing.created_at).toLocaleString();
+    const updatedDate = new Date(drawing.updated_at).toLocaleString();
+
     return (
         <div className="container mx-auto py-8">
             <h1 className="text-3xl font-bold mb-4">{drawing.title}</h1>
             <p className='inline-block border p-4 shadow-md mb-4'>
                 <strong>Created at:</strong>
-                {new Date(drawing.created_at).toLocaleString()}
+                {(createdDate !== "") ? createdDate : ` Not Aavailable`}
             </p>
             <p className='inline-block border p-4 shadow-md mb-4'>
                 <strong>Last updated:</strong>
-                {new Date(drawing.updated_at).toLocaleString()}
+                {(updatedDate !== "") ? updatedDate : ` Not Aavailable`}
             </p>
             <div className="mt-4">
                 <DrawingBoard initialData={drawing} />

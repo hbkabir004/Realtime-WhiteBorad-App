@@ -8,11 +8,10 @@ const DrawingCard = ({ drawing, onDelete }) => {
                 <p>{drawing.description}</p>
             </div>
             <div className="flex justify-between items-center">
-                <Link to={`/drawing/${drawing._id}`} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                    See Details
+                <Link to={`/drawing/${drawing._id}`} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 md:text-base sm:text-xs">
+                    Details
                 </Link>
 
-                {/* Right Side: Update and Delete Buttons */}
                 <div className="flex gap-4">
                     <Link
                         to={`/updateDrawing/${drawing._id}`}
