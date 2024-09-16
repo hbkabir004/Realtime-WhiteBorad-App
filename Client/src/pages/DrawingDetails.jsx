@@ -30,14 +30,14 @@ const DrawingDetails = () => {
 
     return (
         <div className="container mx-auto py-8">
-            <h1 className="text-3xl font-bold mb-4">{drawing.title}</h1>
+            <h1 className="text-3xl font-bold mb-6 text-center">{drawing?.title}</h1>
             <p className='inline-block border p-4 shadow-md mb-4'>
                 <strong>Created at:</strong>
-                {(createdDate !== "") ? createdDate : ` Not Aavailable`}
+                {(createdDate !== 'Invalid Date') ? createdDate : ` Not Aavailable`}
             </p>
             <p className='inline-block border p-4 shadow-md mb-4'>
                 <strong>Last updated:</strong>
-                {(updatedDate !== "") ? updatedDate : ` Not Aavailable`}
+                {(updatedDate !== 'Invalid Date') ? updatedDate : ` Not Aavailable`}
             </p>
             <div className="mt-4">
                 <DrawingBoard initialData={drawing} />

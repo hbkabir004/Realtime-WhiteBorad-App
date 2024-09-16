@@ -15,6 +15,8 @@ const AllDrawings = () => {
         const loadDrawings = async () => {
             try {
                 const data = await fetchDrawings();
+                console.log("ALL DATA", data);
+
                 setDrawings(data);
             } catch (error) {
                 setError(error.message);

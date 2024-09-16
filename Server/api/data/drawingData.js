@@ -2,7 +2,7 @@ const { ObjectId } = require("mongodb");
 const client = require("../dbClient"); // MongoDB client
 
 // Collection reference
-const collection = client.db("wbdb").collection("WhiteBoardCollections");
+const collection = client.db("wbdb").collection("WhiteBoardDB");
 
 // Get all drawings from MongoDB
 const getAllDrawings = async () => {
