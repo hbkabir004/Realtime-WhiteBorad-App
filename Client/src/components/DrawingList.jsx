@@ -1,16 +1,46 @@
 import { Link } from 'react-router-dom';
 
-const DrawingList = ({ drawings }) => {
+const DrawingCard = ({ drawing, onDelete }) => {
     return (
-        <div className="flex flex-col space-y-4">
-            {drawings.map((drawing) => (
-                <Link
-                    key={drawing._id}
-                    to={`/drawing/${drawing._id}`}
-                    className="p-4 border rounded-md hover:bg-gray-100"
-                >
-                    <h3 className="text-lg font-semibold">{drawing.title}</h3>
+        <div className='border p-4 shadow-md mb-4'>
+            <div className='mb-6'>
+                <h2 className="text-xl font-semibold">{drawing.title}</h2>
+                <p>{drawing.description}</p>
+            </div>
+            <div className="flex justify-between items-center">
+                <Link to={`/drawing/${drawing._id}`} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                    See Details
                 </Link>
+
+                {/* Right Side: Update and Delete Buttons */}
+                <div className="flex gap-4">
+                    <Link
+                        to={`/updateDrawing/${drawing._id}`}
+                        className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
+                    >
+                        Update
+                    </Link>
+                    <button
+                        onClick={() => {
+                            if (window.confirm('Are you sure you want to delete this drawing?')) {
+                                onDelete(drawing._id);
+                            }
+                        }}
+                        className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const DrawingList = ({ drawings, onDelete }) => {
+    return (
+        <div>
+            {drawings.map((drawing) => (
+                <DrawingCard key={drawing._id} drawing={drawing} onDelete={onDelete} />
             ))}
         </div>
     );

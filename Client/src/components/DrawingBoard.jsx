@@ -9,6 +9,8 @@ const DrawingBoard = () => {
     const [startPoint, setStartPoint] = useState({ x: 0, y: 0 });
     const [text, setText] = useState('');
     const [isTextMode, setIsTextMode] = useState(false);
+    const [drawings, setDrawings] = useState([]); // To store drawings with metadata
+    const [currentDrawing, setCurrentDrawing] = useState(null); // Track current drawing
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -31,6 +33,7 @@ const DrawingBoard = () => {
     };
 
     const handleMouseUp = () => {
+        finishDrawing();
         setIsDrawing(false);
     };
 
@@ -50,6 +53,7 @@ const DrawingBoard = () => {
     };
 
     const handleTouchEnd = () => {
+        finishDrawing();
         setIsDrawing(false);
     };
 
@@ -60,6 +64,17 @@ const DrawingBoard = () => {
             setIsTextMode(false);
             return;
         }
+
+        const newDrawing = {
+            id: Date.now(), // Unique ID for the drawing
+            drawMode,
+            created_at: new Date().toLocaleString(), // Set created_at when a new drawing starts
+            updated_at: new Date().toLocaleString(), // Set updated_at when a new drawing starts
+            points: [], // To track points for the drawing (optional for complex shapes)
+        };
+        setCurrentDrawing(newDrawing);
+        setDrawings([...drawings, newDrawing]);
+
         setIsDrawing(true);
         setStartPoint({ x, y });
         ctxRef.current.beginPath();
@@ -69,13 +84,35 @@ const DrawingBoard = () => {
     const draw = (x, y) => {
         if (!isDrawing) return;
 
-        if (drawMode === 'pen') {
-            ctxRef.current.lineTo(x, y);
-            ctxRef.current.stroke();
-        } else if (drawMode === 'line') {
-            drawLine(startPoint.x, startPoint.y, x, y);
-        } else if (drawMode === 'rectangle') {
-            drawRectangle(startPoint.x, startPoint.y, x, y);
+        // Update current drawing with new points or changes
+        if (currentDrawing) {
+            const updatedDrawing = {
+                ...currentDrawing,
+                updated_at: new Date().toISOString(), // Update the updated_at timestamp
+            };
+            setCurrentDrawing(updatedDrawing);
+
+            if (drawMode === 'pen') {
+                ctxRef.current.lineTo(x, y);
+                ctxRef.current.stroke();
+            } else if (drawMode === 'line') {
+                drawLine(startPoint.x, startPoint.y, x, y);
+            } else if (drawMode === 'rectangle') {
+                drawRectangle(startPoint.x, startPoint.y, x, y);
+            }
+        }
+    };
+
+    const finishDrawing = () => {
+        if (currentDrawing) {
+            // Finalize the drawing and update the drawings array
+            const updatedDrawings = drawings.map((drawing) =>
+                drawing.id === currentDrawing.id
+                    ? { ...currentDrawing, updated_at: new Date().toISOString() }
+                    : drawing
+            );
+            setDrawings(updatedDrawings);
+            setCurrentDrawing(null); // Reset current drawing
         }
     };
 

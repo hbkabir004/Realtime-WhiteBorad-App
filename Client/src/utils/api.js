@@ -16,7 +16,7 @@ export const fetchDrawings = async () => {
 };
 
 // Fetch a specific drawing by ID
-export const fetchDrawingById = async (id) => {
+export const getDrawingById = async (id) => {  // Renamed function
   const response = await fetch(`${API_BASE_URL}/${id}`);
   return handleResponse(response);
 };
@@ -25,24 +25,32 @@ export const fetchDrawingById = async (id) => {
 export const createDrawing = async (drawingData) => {
   const response = await fetch(`${API_BASE_URL}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(drawingData),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(drawingData), // Pass drawing data
   });
-  return handleResponse(response);
+
+  if (!response.ok) {
+    throw new Error('Failed to create drawing');
+  }
+
+  return response.json(); // Return the created drawing data
 };
 
+
 // Update a drawing by ID
-export const updateDrawing = async (id, drawingData) => {
+export const updateDrawingById = async (id, updatedData) => {  // Renamed function
   const response = await fetch(`${API_BASE_URL}/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(drawingData),
+    body: JSON.stringify(updatedData),
   });
   return handleResponse(response);
 };
 
 // Delete a drawing by ID
-export const deleteDrawing = async (id) => {
+export const deleteDrawingById = async (id) => {
   const response = await fetch(`${API_BASE_URL}/${id}`, {
     method: 'DELETE',
   });
