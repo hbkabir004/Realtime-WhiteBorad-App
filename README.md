@@ -1,6 +1,6 @@
-# MERN Interview Test: Whiteboard App
+# Realtime Whiteboard App
 
-This project is a solution for the MERN Full Stack Developer technical interview test. It is a fully functional Whiteboard App built using the MERN stack (MongoDB, Express.js, React.js, and Node.js). The application allows users to create, view, update, and delete drawings consisting of lines, shapes, and text annotations.
+It is a fully functional Whiteboard App built using the MERN stack (MongoDB, Express.js, React.js, and Node.js). The application allows users to create, view, update, and delete drawings consisting of lines, shapes, and text annotations.
 
 ## Table of Contents
 
